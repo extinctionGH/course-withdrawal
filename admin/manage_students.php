@@ -14,25 +14,29 @@ $conn = $db->connect();
 
 $message = "";
 
+// Fetch all sections
+$sections = $conn->query("SELECT SectionID, SectionName FROM section ORDER BY SectionName ASC")->fetchAll(PDO::FETCH_ASSOC);
+
 // Handle add student - automatically assign to this teacher
 if (isset($_POST['add_student'])) {
     $fullName = trim($_POST['full_name']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
+    $sectionID = intval($_POST['section_id']);
 
-    if (!empty($fullName) && !empty($email) && !empty($password)) {
+    if (!empty($fullName) && !empty($email) && !empty($password) && $sectionID > 0) {
         $check = $conn->prepare("SELECT * FROM user WHERE Email = :email");
         $check->execute([':email' => $email]);
         if ($check->rowCount() > 0) {
             $message = "Email already exists!";
         } else {
-            // Add TeacherID when creating student
-            $stmt = $conn->prepare("INSERT INTO user (FullName, Email, Password, Role, TeacherID) VALUES (:fullName, :email, :password, 'Student', :teacherID)");
+            $stmt = $conn->prepare("INSERT INTO user (FullName, Email, Password, Role, TeacherID, SectionID) VALUES (:fullName, :email, :password, 'Student', :teacherID, :sectionID)");
             $stmt->execute([
                 ':fullName' => $fullName,
                 ':email' => $email,
                 ':password' => $password,
-                ':teacherID' => $_SESSION['userID']
+                ':teacherID' => $_SESSION['userID'],
+                ':sectionID' => $sectionID
             ]);
             $message = "Student added successfully!";
         }
@@ -47,22 +51,25 @@ if (isset($_POST['edit_student'])) {
     $fullName = trim($_POST['full_name']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
+    $sectionID = intval($_POST['section_id']);
 
-    if (!empty($fullName) && !empty($email)) {
+    if (!empty($fullName) && !empty($email) && $sectionID > 0) {
         if (!empty($password)) {
-            $stmt = $conn->prepare("UPDATE user SET FullName = :fullName, Email = :email, Password = :password WHERE UserID = :id AND Role = 'Student' AND TeacherID = :teacherID");
+            $stmt = $conn->prepare("UPDATE user SET FullName = :fullName, Email = :email, Password = :password, SectionID = :sectionID WHERE UserID = :id AND Role = 'Student' AND TeacherID = :teacherID");
             $stmt->execute([
                 ':fullName' => $fullName,
                 ':email' => $email,
                 ':password' => $password,
+                ':sectionID' => $sectionID,
                 ':id' => $id,
                 ':teacherID' => $_SESSION['userID']
             ]);
         } else {
-            $stmt = $conn->prepare("UPDATE user SET FullName = :fullName, Email = :email WHERE UserID = :id AND Role = 'Student' AND TeacherID = :teacherID");
+            $stmt = $conn->prepare("UPDATE user SET FullName = :fullName, Email = :email, SectionID = :sectionID WHERE UserID = :id AND Role = 'Student' AND TeacherID = :teacherID");
             $stmt->execute([
                 ':fullName' => $fullName,
                 ':email' => $email,
+                ':sectionID' => $sectionID,
                 ':id' => $id,
                 ':teacherID' => $_SESSION['userID']
             ]);
@@ -84,13 +91,19 @@ if (isset($_POST['delete_student'])) {
     $message = "Student deleted successfully!";
 }
 
-// Fetch only this teacher's students
-$stmt = $conn->prepare("SELECT * FROM user WHERE Role = 'Student' AND TeacherID = :teacherID ORDER BY FullName ASC");
+// Fetch only this teacher's students with section info
+$stmt = $conn->prepare("
+    SELECT u.*, s.SectionName 
+    FROM user u
+    LEFT JOIN section s ON u.SectionID = s.SectionID
+    WHERE u.Role = 'Student' AND u.TeacherID = :teacherID 
+    ORDER BY u.FullName ASC
+");
 $stmt->execute([':teacherID' => $_SESSION['userID']]);
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h2>Manage My Students</h2>
+<h2><i class="fas fa-users"></i> Manage My Students</h2>
 
 <?php if($message): ?>
     <p class="text-success"><?= htmlspecialchars($message) ?></p>
@@ -108,31 +121,53 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <label>Password:</label>
     <input type="password" name="password" required>
 
+    <label>Section:</label>
+    <select name="section_id" required>
+        <option value="">-- Select Section --</option>
+        <?php foreach ($sections as $sec): ?>
+            <option value="<?= $sec['SectionID'] ?>"><?= htmlspecialchars($sec['SectionName']) ?></option>
+        <?php endforeach; ?>
+    </select>
+
     <button type="submit" name="add_student" class="btn">Add Student</button>
 </form>
 
 <!-- Students Table -->
-<table class="styled-table">
-    <tr>
-        <th>Full Name</th>
-        <th>Email</th>
-        <th>Password</th>
-        <th>Actions</th>
-    </tr>
-    <?php foreach ($students as $s): ?>
-    <tr>
-        <form method="POST">
-            <td><input type="text" name="full_name" value="<?= htmlspecialchars($s['FullName']) ?>" required></td>
-            <td><input type="email" name="email" value="<?= htmlspecialchars($s['Email']) ?>" required></td>
-            <td><input type="text" name="password" value="<?= htmlspecialchars($s['Password']) ?>"></td>
-            <td>
-                <input type="hidden" name="user_id" value="<?= $s['UserID'] ?>">
-                <button type="submit" name="edit_student" class="btn">Edit</button>
-                <button type="submit" name="delete_student" class="btn btn-danger" onclick="return confirm('Delete this student?')">Delete</button>
-            </td>
-        </form>
-    </tr>
-    <?php endforeach; ?>
-</table>
+<div class="card">
+    <h3>My Students</h3>
+    <table class="styled-table">
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Section</th>
+            <th>Password</th>
+            <th>Actions</th>
+        </tr>
+        <?php foreach ($students as $s): ?>
+        <tr>
+            <form method="POST">
+                <td><input type="text" name="full_name" value="<?= htmlspecialchars($s['FullName']) ?>" required></td>
+                <td><input type="email" name="email" value="<?= htmlspecialchars($s['Email']) ?>" required></td>
+                <td>
+                    <select name="section_id" required>
+                        <option value="">-- Select Section --</option>
+                        <?php foreach ($sections as $sec): ?>
+                            <option value="<?= $sec['SectionID'] ?>" <?= ($s['SectionID'] == $sec['SectionID']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($sec['SectionName']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+                <td><input type="text" name="password" value="<?= htmlspecialchars($s['Password']) ?>"></td>
+                <td>
+                    <input type="hidden" name="user_id" value="<?= $s['UserID'] ?>">
+                    <button type="submit" name="edit_student" class="btn">Edit</button>
+                    <button type="submit" name="delete_student" class="btn btn-danger" onclick="return confirm('Delete this student?')">Delete</button>
+                </td>
+            </form>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</div>
 
 <?php require '../includes/footer.php'; ?>
