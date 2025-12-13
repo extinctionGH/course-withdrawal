@@ -86,15 +86,15 @@ if (isset($_POST['delete_teacher'])) {
 $teachers = $conn->query("SELECT * FROM user WHERE Role = 'Admin' ORDER BY FullName ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h2><i class="fas fa-chalkboard-teacher"></i> Manage Teachers/Admin</h2>
-
 <?php if($message): ?>
     <p class="text-success"><?= htmlspecialchars($message) ?></p>
 <?php endif; ?>
 
 <!-- Add Teacher Form -->
 <form method="POST" class="card">
+    <h2><i class="fas fa-chalkboard-teacher"></i> Manage Teachers/Admin</h2>
     <h3>Add New Teacher/Admin</h3>
+    
     <label>Full Name:</label>
     <input type="text" name="full_name" required>
 

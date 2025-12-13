@@ -103,15 +103,15 @@ $stmt->execute([':teacherID' => $_SESSION['userID']]);
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h2><i class="fas fa-users"></i> Manage My Students</h2>
-
 <?php if($message): ?>
     <p class="text-success"><?= htmlspecialchars($message) ?></p>
 <?php endif; ?>
 
 <!-- Add Student Form -->
 <form method="POST" class="card">
+    <h2><i class="fas fa-user-graduate"></i> Manage My Students</h2>
     <h3>Add New Student</h3>
+    
     <label>Full Name:</label>
     <input type="text" name="full_name" required>
 

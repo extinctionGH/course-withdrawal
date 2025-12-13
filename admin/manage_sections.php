@@ -59,17 +59,18 @@ if (isset($_POST['delete_section'])) {
 $sections = $conn->query("SELECT * FROM section ORDER BY SectionName ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h2><i class="fas fa-users-class"></i> Manage Class Sections</h2>
-
 <?php if($message): ?>
     <p class="text-success"><?= htmlspecialchars($message) ?></p>
 <?php endif; ?>
 
 <!-- Add Section Form -->
 <form method="POST" class="card">
+    <h2><i class="fas fa-layer-group"></i> Manage Class Sections</h2>
     <h3>Add New Section</h3>
-    <label>Section Name (e.g., BSCS-2A, ACT-APPDEV-2B):</label>
+    
+    <label>Section Name:</label>
     <input type="text" name="section_name" required placeholder="Enter section name">
+    
     <button type="submit" name="add_section" class="btn">Add Section</button>
 </form>
 

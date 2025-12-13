@@ -64,14 +64,13 @@ $assignments = $conn->query("
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<h2><i class="fas fa-user-cog"></i> Assign Teachers to Course-Section</h2>
-
 <?php if($message): ?>
     <p class="text-success"><?= htmlspecialchars($message) ?></p>
 <?php endif; ?>
 
 <!-- Add Assignment Form -->
 <form method="POST" class="card">
+    <h2><i class="fas fa-user-cog"></i> Assign Teachers to Course-Section</h2>
     <h3>Create New Assignment</h3>
     
     <label>Teacher/Professor:</label>

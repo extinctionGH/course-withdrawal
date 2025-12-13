@@ -72,13 +72,13 @@ if (isset($_SESSION['userID'])) {
             <i class="fas fa-book"></i> Manage Courses
         </a>
         <a href="../admin/manage_sections.php" class="<?= ($current_page == 'manage_sections.php') ? 'active' : '' ?>" title="Manage Sections">
-            <i class="fas fa-users-class"></i> Manage Sections
+            <i class="fas fa-layer-group"></i> Manage Sections
         </a>
         <a href="../admin/assign_teachers.php" class="<?= ($current_page == 'assign_teachers.php') ? 'active' : '' ?>" title="Assign Teachers">
             <i class="fas fa-user-cog"></i> Assign Teachers
         </a>
         <a href="../admin/manage_students.php" class="<?= ($current_page == 'manage_students.php') ? 'active' : '' ?>" title="Manage Students">
-            <i class="fas fa-users"></i> Manage Students
+            <i class="fas fa-user-graduate"></i> Manage Students
         </a>
         <a href="../admin/manage_teachers.php" class="<?= ($current_page == 'manage_teachers.php') ? 'active' : '' ?>" title="Manage Teachers">
             <i class="fas fa-chalkboard-teacher"></i> Manage Teachers
