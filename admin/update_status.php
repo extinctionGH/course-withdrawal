@@ -13,6 +13,9 @@ if (isset($_POST['id'], $_POST['status'])) {
     $db = new Database();
     $conn = $db->connect();
 
+    // Get admin remarks (optional)
+    $adminRemarks = isset($_POST['admin_remarks']) ? trim($_POST['admin_remarks']) : '';
+
     // Security: Verify that this request was sent to THIS teacher
     $checkStmt = $conn->prepare("
         SELECT wr.*, u.FullName as StudentName, u.Email as StudentEmail, c.CourseName
@@ -28,30 +31,36 @@ if (isset($_POST['id'], $_POST['status'])) {
 
     if ($checkStmt->rowCount() > 0) {
         $request = $checkStmt->fetch();
-        
-        // Update status
-        $stmt = $conn->prepare("UPDATE withdrawal_request SET Status = :status WHERE RequestID = :id");
+
+        // Update status and admin remarks
+        $stmt = $conn->prepare("UPDATE withdrawal_request SET Status = :status, AdminRemarks = :remarks WHERE RequestID = :id");
         $stmt->execute([
             ':status' => $_POST['status'],
+            ':remarks' => $adminRemarks ?: null,
             ':id' => $_POST['id']
         ]);
-        
+
         // Send email to student
         $mailer = new Mailer();
         $mailer->sendRequestReviewedEmail(
             $request['StudentEmail'],
             $request['StudentName'],
             $request['CourseName'],
-            $_POST['status']
+            $_POST['status'],
+            $adminRemarks
         );
-        
+
         // Create notification for student
         $notif = new Notification($conn);
         $notificationType = $_POST['status'] == 'Approved' ? 'success' : 'warning';
+        $notificationMessage = "Your withdrawal request for {$request['CourseName']} has been {$_POST['status']}.";
+        if (!empty($adminRemarks)) {
+            $notificationMessage .= " Remarks: " . substr($adminRemarks, 0, 100) . (strlen($adminRemarks) > 100 ? '...' : '');
+        }
         $notif->create(
             $request['UserID'],
             "Request {$_POST['status']}",
-            "Your withdrawal request for {$request['CourseName']} has been {$_POST['status']}.",
+            $notificationMessage,
             $notificationType
         );
     }

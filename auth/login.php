@@ -3,7 +3,7 @@ session_start();
 require '../config/db_connect.php';
 
 $db = new Database();
-$conn = $db->connect(); 
+$conn = $db->connect();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -12,15 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($email) && !empty($password)) {
 
-        $stmt = $conn->prepare("SELECT * FROM user WHERE Email = :email AND Password = :password LIMIT 1");
-        $stmt->execute([
-            ':email' => $email,
-            ':password' => $password
-        ]);
+        // Fetch user by email only (password will be verified separately)
+        $stmt = $conn->prepare("SELECT * FROM user WHERE Email = :email LIMIT 1");
+        $stmt->execute([':email' => $email]);
 
         $user = $stmt->fetch();
 
-        if ($user) {
+        // Verify password using password_verify for hashed passwords
+        if ($user && password_verify($password, $user['Password'])) {
             $_SESSION['userID'] = $user['UserID'];
             $_SESSION['fullName'] = $user['FullName'];
             $_SESSION['role'] = $user['Role'];
@@ -42,12 +41,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Course Withdrawal Request System | Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body class="login-page">
     <div class="table">
         <div class="center-table">
@@ -70,18 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="group">
                         <label>Password</label>
-                        <input type="password" name="password" class="textinput" required placeholder="Enter your password">
+                        <input type="password" name="password" class="textinput" required
+                            placeholder="Enter your password">
                     </div>
                     <div class="dash-footer">
                         <button type="submit" id="login-btn">Continue</button>
                     </div>
                 </form>
-
-                <div class="group forgot">
-                    <a href="" id="forgot-password">Forgot Password?</a>
-                </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

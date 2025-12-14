@@ -40,7 +40,7 @@ $rejectedRequests = $rejectedStmt->fetch()['total'];
 // Recent requests with teacher info
 $stmt = $conn->prepare("
     SELECT wr.RequestID, c.CourseName, t.FullName as TeacherName, 
-           s.SectionName, wr.RequestDate, wr.Reason, wr.Status
+           s.SectionName, wr.RequestDate, wr.Reason, wr.Status, wr.AdminRemarks
     FROM withdrawal_request wr
     JOIN course c ON wr.CourseID = c.CourseID
     JOIN user t ON wr.TeacherID = t.UserID
@@ -71,7 +71,7 @@ $requestedTeachers = $teachersStmt->fetchAll(PDO::FETCH_ASSOC);
     <p>Track your course withdrawal requests and their status.</p>
     <?php if (!empty($studentInfo['SectionName'])): ?>
         <p style="margin-top: 10px;">
-            <i class="fas fa-users-class"></i> <strong>Your Section:</strong> 
+            <i class="fas fa-users-class"></i> <strong>Your Section:</strong>
             <span style="color: #5bc0be; font-weight: 600;"><?= htmlspecialchars($studentInfo['SectionName']) ?></span>
         </p>
     <?php endif; ?>
@@ -84,19 +84,19 @@ $requestedTeachers = $teachersStmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="stat-number"><?= $totalRequests ?></div>
         <div class="stat-label">All time</div>
     </div>
-    
+
     <div class="stat-card">
         <h3>Pending</h3>
         <div class="stat-number"><?= $pendingRequests ?></div>
         <div class="stat-label">Awaiting review</div>
     </div>
-    
+
     <div class="stat-card">
         <h3>Approved</h3>
         <div class="stat-number"><?= $approvedRequests ?></div>
         <div class="stat-label">Accepted</div>
     </div>
-    
+
     <div class="stat-card">
         <h3>Rejected</h3>
         <div class="stat-number"><?= $rejectedRequests ?></div>
@@ -106,33 +106,35 @@ $requestedTeachers = $teachersStmt->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- Teachers You've Sent Requests To -->
 <?php if (!empty($requestedTeachers)): ?>
-<div class="card">
-    <h2><i class="fas fa-chalkboard-teacher"></i> Teachers You've Sent Requests To</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-        <?php foreach ($requestedTeachers as $t): ?>
-            <div style="background: #0f1a35; padding: 20px; border-radius: 10px; border-left: 4px solid #5bc0be;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
-                    <div style="background: rgba(91, 192, 190, 0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-user-tie" style="color: #5bc0be; font-size: 20px;"></i>
+    <div class="card">
+        <h2><i class="fas fa-chalkboard-teacher"></i> Teachers You've Sent Requests To</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+            <?php foreach ($requestedTeachers as $t): ?>
+                <div style="background: #0f1a35; padding: 20px; border-radius: 10px; border-left: 4px solid #5bc0be;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        <div
+                            style="background: rgba(91, 192, 190, 0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-user-tie" style="color: #5bc0be; font-size: 20px;"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin: 0; color: #e0e6ed; font-size: 16px; font-weight: 600;">
+                                <?= htmlspecialchars($t['FullName']) ?>
+                            </h3>
+                            <small style="color: #9ad1d4; font-size: 13px;">
+                                <i class="fas fa-envelope"></i> <?= htmlspecialchars($t['Email']) ?>
+                            </small>
+                        </div>
                     </div>
-                    <div>
-                        <h3 style="margin: 0; color: #e0e6ed; font-size: 16px; font-weight: 600;">
-                            <?= htmlspecialchars($t['FullName']) ?>
-                        </h3>
-                        <small style="color: #9ad1d4; font-size: 13px;">
-                            <i class="fas fa-envelope"></i> <?= htmlspecialchars($t['Email']) ?>
-                        </small>
+                    <div style="border-top: 1px solid #243b55; padding-top: 10px; margin-top: 10px;">
+                        <span style="color: #9ad1d4; font-size: 13px;">
+                            <i class="fas fa-file-alt"></i> <?= $t['RequestCount'] ?>
+                            request<?= $t['RequestCount'] != 1 ? 's' : '' ?> sent
+                        </span>
                     </div>
                 </div>
-                <div style="border-top: 1px solid #243b55; padding-top: 10px; margin-top: 10px;">
-                    <span style="color: #9ad1d4; font-size: 13px;">
-                        <i class="fas fa-file-alt"></i> <?= $t['RequestCount'] ?> request<?= $t['RequestCount'] != 1 ? 's' : '' ?> sent
-                    </span>
-                </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
-</div>
 <?php endif; ?>
 
 <!-- Recent Requests -->
@@ -161,6 +163,18 @@ $requestedTeachers = $teachersStmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= htmlspecialchars($r['RequestDate']) ?></td>
                         <td class="<?= strtolower($r['Status']) ?>"><?= htmlspecialchars($r['Status']) ?></td>
                     </tr>
+                    <?php if (!empty($r['AdminRemarks'])): ?>
+                        <tr>
+                            <td colspan="6" style="background: rgba(91, 192, 190, 0.05); padding: 10px 20px;">
+                                <small style="color: #9ad1d4;"><i class="fas fa-comment-alt"></i> <strong>Admin
+                                        Remarks:</strong></small>
+                                <div
+                                    style="margin-top: 5px; padding: 10px; background: rgba(91, 192, 190, 0.1); border-radius: 5px; border-left: 3px solid <?= $r['Status'] === 'Approved' ? '#6bcf7f' : '#ff7b7b' ?>; font-size: 14px;">
+                                    <?= htmlspecialchars($r['AdminRemarks']) ?>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </table>
         </div>
@@ -169,7 +183,8 @@ $requestedTeachers = $teachersStmt->fetchAll(PDO::FETCH_ASSOC);
     <?php else: ?>
         <div class="empty-state">
             <i class="fas fa-inbox" style="font-size: 64px; opacity: 0.3; margin-bottom: 20px;"></i>
-            <p>No requests yet. <a href="request_form.php" style="color: #5bc0be; text-decoration: underline;">Submit your first request</a></p>
+            <p>No requests yet. <a href="request_form.php" style="color: #5bc0be; text-decoration: underline;">Submit your
+                    first request</a></p>
         </div>
     <?php endif; ?>
 </div>

@@ -14,7 +14,7 @@ $dateFilter = isset($_GET['date']) ? $_GET['date'] : 'all';
 // Build query
 $query = "
     SELECT wr.RequestID, c.CourseName, t.FullName as TeacherName, s.SectionName,
-           wr.RequestDate, wr.Reason, wr.Status
+           wr.RequestDate, wr.Reason, wr.Status, wr.AdminRemarks
     FROM withdrawal_request wr
     JOIN course c ON wr.CourseID = c.CourseID
     JOIN user t ON wr.TeacherID = t.UserID
@@ -66,82 +66,68 @@ $rejectedCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Rejec
 
 <div class="card">
     <h2><i class="fas fa-list"></i> My Withdrawal Requests</h2>
-    
+
     <!-- Search and Filter Section -->
-    <div style="background: #0f1a35; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-        <form method="GET" id="searchForm">
-            <div style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 15px; align-items: end;">
-                <!-- Search Input -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-search"></i> Search
-                    </label>
-                    <input type="text" 
-                           name="search" 
-                           placeholder="Search by course, teacher, or reason..." 
-                           value="<?= htmlspecialchars($searchTerm) ?>"
-                           style="width: 100%;">
-                </div>
-                
-                <!-- Status Filter -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-filter"></i> Status
-                    </label>
-                    <select name="status" style="width: 100%;">
-                        <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All Status</option>
-                        <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                        <option value="Approved" <?= $statusFilter === 'Approved' ? 'selected' : '' ?>>Approved</option>
-                        <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
-                    </select>
-                </div>
-                
-                <!-- Date Filter -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-calendar"></i> Date
-                    </label>
-                    <select name="date" style="width: 100%;">
-                        <option value="all" <?= $dateFilter === 'all' ? 'selected' : '' ?>>All Time</option>
-                        <option value="today" <?= $dateFilter === 'today' ? 'selected' : '' ?>>Today</option>
-                        <option value="week" <?= $dateFilter === 'week' ? 'selected' : '' ?>>Last 7 Days</option>
-                        <option value="month" <?= $dateFilter === 'month' ? 'selected' : '' ?>>Last 30 Days</option>
-                    </select>
-                </div>
-                
-                <!-- Buttons -->
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                    <a href="view_requests.php" class="btn" style="background: #3a506b;">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                </div>
+    <form method="GET" style="margin-bottom: 20px; padding: 20px; background: #0f1a35; border-radius: 8px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <label>Search:</label>
+                <input type="text" name="search" placeholder="Search by course, teacher, or reason..."
+                    value="<?= htmlspecialchars($searchTerm) ?>">
             </div>
-        </form>
-    </div>
-    
+
+            <div>
+                <label>Status:</label>
+                <select name="status">
+                    <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All Status</option>
+                    <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="Approved" <?= $statusFilter === 'Approved' ? 'selected' : '' ?>>Approved</option>
+                    <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Date:</label>
+                <select name="date">
+                    <option value="all" <?= $dateFilter === 'all' ? 'selected' : '' ?>>All Time</option>
+                    <option value="today" <?= $dateFilter === 'today' ? 'selected' : '' ?>>Today</option>
+                    <option value="week" <?= $dateFilter === 'week' ? 'selected' : '' ?>>Last 7 Days</option>
+                    <option value="month" <?= $dateFilter === 'month' ? 'selected' : '' ?>>Last 30 Days</option>
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: flex-end; gap: 10px;">
+                <button type="submit" class="btn">Filter</button>
+                <a href="view_requests.php" class="btn" style="background: #3a506b;">Reset</a>
+            </div>
+        </div>
+    </form>
+
     <!-- Statistics Summary -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #5bc0be;">
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
+        <div
+            style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #5bc0be;">
             <div style="font-size: 24px; color: #5bc0be; font-weight: bold;"><?= $totalCount ?></div>
             <div style="color: #9ad1d4; font-size: 12px;">Total Found</div>
         </div>
-        <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #ffd93d;">
+        <div
+            style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #ffd93d;">
             <div style="font-size: 24px; color: #ffd93d; font-weight: bold;"><?= $pendingCount ?></div>
             <div style="color: #9ad1d4; font-size: 12px;">Pending</div>
         </div>
-        <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #6bcf7f;">
+        <div
+            style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #6bcf7f;">
             <div style="font-size: 24px; color: #6bcf7f; font-weight: bold;"><?= $approvedCount ?></div>
             <div style="color: #9ad1d4; font-size: 12px;">Approved</div>
         </div>
-        <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #ff7b7b;">
+        <div
+            style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center; border-left: 4px solid #ff7b7b;">
             <div style="font-size: 24px; color: #ff7b7b; font-weight: bold;"><?= $rejectedCount ?></div>
             <div style="color: #9ad1d4; font-size: 12px;">Rejected</div>
         </div>
     </div>
-    
+
     <!-- Results Table -->
     <?php if ($requests): ?>
         <div style="overflow-x: auto;">
@@ -154,6 +140,7 @@ $rejectedCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Rejec
                         <th>Reason</th>
                         <th>Date</th>
                         <th>Status</th>
+                        <th>Admin Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -169,7 +156,8 @@ $rejectedCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Rejec
                             </td>
                             <td><?= htmlspecialchars($r['SectionName'] ?? 'N/A') ?></td>
                             <td>
-                                <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?= htmlspecialchars($r['Reason']) ?>">
+                                <div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                                    title="<?= htmlspecialchars($r['Reason']) ?>">
                                     <?= htmlspecialchars($r['Reason']) ?>
                                 </div>
                             </td>
@@ -179,6 +167,16 @@ $rejectedCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Rejec
                             </td>
                             <td class="<?= strtolower($r['Status']) ?>">
                                 <?= htmlspecialchars($r['Status']) ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($r['AdminRemarks'])): ?>
+                                    <div
+                                        style="max-width: 200px; background: rgba(91, 192, 190, 0.1); padding: 8px; border-radius: 5px; border-left: 3px solid <?= $r['Status'] === 'Approved' ? '#6bcf7f' : '#ff7b7b' ?>; font-size: 13px;">
+                                        <?= htmlspecialchars($r['AdminRemarks']) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <span style="color: #6b7b8c;">—</span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -203,12 +201,12 @@ $rejectedCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Rejec
 </div>
 
 <script>
-// Auto-submit form on filter change
-document.querySelectorAll('#searchForm select').forEach(select => {
-    select.addEventListener('change', function() {
-        document.getElementById('searchForm').submit();
+    // Auto-submit form on filter change
+    document.querySelectorAll('#searchForm select').forEach(select => {
+        select.addEventListener('change', function () {
+            document.getElementById('searchForm').submit();
+        });
     });
-});
 </script>
 
 <?php include '../includes/footer.php'; ?>
