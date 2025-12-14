@@ -14,6 +14,9 @@ $conn = $db->connect();
 
 $message = "";
 
+// Get search parameter
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+
 // Handle add section
 if (isset($_POST['add_section'])) {
     $sectionName = trim($_POST['section_name']);
@@ -55,12 +58,28 @@ if (isset($_POST['delete_section'])) {
     $message = "Section deleted successfully!";
 }
 
-// Fetch all sections
-$sections = $conn->query("SELECT * FROM section ORDER BY SectionName ASC")->fetchAll(PDO::FETCH_ASSOC);
+// Fetch all sections with search
+$query = "SELECT * FROM section";
+$params = [];
+
+if (!empty($searchTerm)) {
+    $query .= " WHERE SectionName LIKE :search";
+    $params[':search'] = "%{$searchTerm}%";
+}
+
+$query .= " ORDER BY SectionName ASC";
+
+$stmt = $conn->prepare($query);
+$stmt->execute($params);
+$sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$totalCount = count($sections);
 ?>
 
 <?php if($message): ?>
-    <p class="text-success"><?= htmlspecialchars($message) ?></p>
+    <div class="alert <?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'alert-success' : 'alert-error' ?>">
+        <i class="fas fa-<?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'check-circle' : 'exclamation-circle' ?>"></i>
+        <?= htmlspecialchars($message) ?>
+    </div>
 <?php endif; ?>
 
 <!-- Add Section Form -->
@@ -71,30 +90,102 @@ $sections = $conn->query("SELECT * FROM section ORDER BY SectionName ASC")->fetc
     <label>Section Name:</label>
     <input type="text" name="section_name" required placeholder="Enter section name">
     
-    <button type="submit" name="add_section" class="btn">Add Section</button>
+    <button type="submit" name="add_section" class="btn">
+        <i class="fas fa-plus"></i> Add Section
+    </button>
 </form>
 
 <!-- Sections Table -->
 <div class="card">
-    <h3>All Sections</h3>
-    <table class="styled-table">
-        <tr>
-            <th>Section Name</th>
-            <th>Actions</th>
-        </tr>
-        <?php foreach ($sections as $s): ?>
-        <tr>
-            <form method="POST">
-                <td><input type="text" name="section_name" value="<?= htmlspecialchars($s['SectionName']) ?>" required></td>
-                <td>
-                    <input type="hidden" name="section_id" value="<?= $s['SectionID'] ?>">
-                    <button type="submit" name="edit_section" class="btn">Edit</button>
-                    <button type="submit" name="delete_section" class="btn btn-danger" onclick="return confirm('Delete this section?')">Delete</button>
-                </td>
-            </form>
-        </tr>
-        <?php endforeach; ?>
-    </table>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>All Sections (<?= $totalCount ?>)</h3>
+    </div>
+    
+    <!-- Search Section -->
+    <div style="background: #0f1a35; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <form method="GET" style="display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+            <div>
+                <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
+                    <i class="fas fa-search"></i> Search Sections
+                </label>
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search by section name..." 
+                       value="<?= htmlspecialchars($searchTerm) ?>"
+                       style="width: 100%;">
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <?php if (!empty($searchTerm)): ?>
+                    <a href="manage_sections.php" class="btn" style="background: #3a506b;">
+                        <i class="fas fa-redo"></i> Reset
+                    </a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+    
+    <?php if ($sections): ?>
+        <div style="overflow-x: auto;">
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Section Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($sections as $s): ?>
+                    <tr>
+                        <form method="POST">
+                            <td>
+                                <input type="text" name="section_name" value="<?= htmlspecialchars($s['SectionName']) ?>" required>
+                            </td>
+                            <td>
+                                <input type="hidden" name="section_id" value="<?= $s['SectionID'] ?>">
+                                <button type="submit" name="edit_section" class="btn">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button type="submit" name="delete_section" class="btn btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </form>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <div class="empty-state">
+            <i class="fas fa-layer-group" style="font-size: 64px; opacity: 0.3; margin-bottom: 20px;"></i>
+            <p>No sections found<?= !empty($searchTerm) ? ' matching your search' : '' ?>.</p>
+            <?php if (!empty($searchTerm)): ?>
+                <a href="manage_sections.php" class="btn btn-primary" style="margin-top: 15px;">
+                    <i class="fas fa-redo"></i> Clear Search
+                </a>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 </div>
+
+<script>
+// Highlight search terms in results
+<?php if (!empty($searchTerm)): ?>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchTerm = <?= json_encode($searchTerm) ?>;
+    
+    document.querySelectorAll('table tbody input[type="text"]').forEach(input => {
+        if (input.value.toLowerCase().includes(searchTerm.toLowerCase())) {
+            input.style.background = 'rgba(91, 192, 190, 0.15)';
+            input.style.borderColor = '#5bc0be';
+        }
+    });
+});
+<?php endif; ?>
+</script>
 
 <?php require '../includes/footer.php'; ?>

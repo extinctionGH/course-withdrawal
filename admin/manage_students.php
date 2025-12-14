@@ -164,7 +164,7 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     <!-- Search and Filter -->
     <div style="background: #0f1a35; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        <form method="GET" style="display: grid; grid-template-columns: 1fr 250px auto; gap: 15px; align-items: end;">
+        <form method="GET" style="display: grid; grid-template-columns: 1fr 250px; gap: 15px; margin-bottom: 15px;">
             <div>
                 <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
                     <i class="fas fa-search"></i> Search Students
@@ -189,16 +189,16 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php endforeach; ?>
                 </select>
             </div>
-            
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Search
-                </button>
-                <a href="manage_students.php" class="btn" style="background: #3a506b;">
-                    <i class="fas fa-redo"></i> Reset
-                </a>
-            </div>
         </form>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button type="submit" class="btn" onclick="this.closest('.card').querySelector('form').submit()">
+                <i class="fas fa-search"></i> Filter
+            </button>
+            <a href="manage_students.php" class="btn" style="background: #3a506b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-redo"></i> Reset
+            </a>
+        </div>
     </div>
     
     <?php if ($students): ?>

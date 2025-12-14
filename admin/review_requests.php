@@ -70,55 +70,45 @@ $pendingCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Pendin
     
     <!-- Search and Filter Section -->
     <div style="background: #0f1a35; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
-        <form method="GET" id="searchForm">
-            <div style="display: grid; grid-template-columns: 1fr 200px 200px auto; gap: 15px; align-items: end;">
-                <!-- Search Input -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-search"></i> Search
-                    </label>
-                    <input type="text" 
-                           name="search" 
-                           placeholder="Search by student, course, or reason..." 
-                           value="<?= htmlspecialchars($searchTerm) ?>"
-                           style="width: 100%;">
-                </div>
-                
-                <!-- Status Filter -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-filter"></i> Status
-                    </label>
-                    <select name="status" style="width: 100%;">
-                        <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All Status</option>
-                        <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                        <option value="Approved" <?= $statusFilter === 'Approved' ? 'selected' : '' ?>>Approved</option>
-                        <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
-                    </select>
-                </div>
-                
-                <!-- Date Filter -->
-                <div>
-                    <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
-                        <i class="fas fa-calendar"></i> Date
-                    </label>
-                    <select name="date" style="width: 100%;">
-                        <option value="all" <?= $dateFilter === 'all' ? 'selected' : '' ?>>All Time</option>
-                        <option value="today" <?= $dateFilter === 'today' ? 'selected' : '' ?>>Today</option>
-                        <option value="week" <?= $dateFilter === 'week' ? 'selected' : '' ?>>Last 7 Days</option>
-                        <option value="month" <?= $dateFilter === 'month' ? 'selected' : '' ?>>Last 30 Days</option>
-                    </select>
-                </div>
-                
-                <!-- Buttons -->
-                <div style="display: flex; gap: 10px;">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i> Search
-                    </button>
-                    <a href="review_requests.php" class="btn" style="background: #3a506b;">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                </div>
+        <form method="GET" id="searchForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div style="grid-column: 1 / -1;">
+                <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
+                    <i class="fas fa-search"></i> Search
+                </label>
+                <input type="text" 
+                       name="search" 
+                       placeholder="Search by student, course, or reason..." 
+                       value="<?= htmlspecialchars($searchTerm) ?>"
+                       style="width: 100%;">
+            </div>
+            
+            <div>
+                <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
+                    <i class="fas fa-filter"></i> Status
+                </label>
+                <select name="status" style="width: 100%;">
+                    <option value="all" <?= $statusFilter === 'all' ? 'selected' : '' ?>>All Status</option>
+                    <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                    <option value="Approved" <?= $statusFilter === 'Approved' ? 'selected' : '' ?>>Approved</option>
+                    <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+                </select>
+            </div>
+            
+            <div>
+                <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
+                    <i class="fas fa-calendar"></i> Date
+                </label>
+                <select name="date" style="width: 100%;">
+                    <option value="all" <?= $dateFilter === 'all' ? 'selected' : '' ?>>All Time</option>
+                    <option value="today" <?= $dateFilter === 'today' ? 'selected' : '' ?>>Today</option>
+                    <option value="week" <?= $dateFilter === 'week' ? 'selected' : '' ?>>Last 7 Days</option>
+                    <option value="month" <?= $dateFilter === 'month' ? 'selected' : '' ?>>Last 30 Days</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <button type="submit" class="btn">Filter</button>
+                <a href="review_requests.php" class="btn" style="background: #3a506b;">Reset</a>
             </div>
         </form>
     </div>
