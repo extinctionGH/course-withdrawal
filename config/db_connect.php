@@ -9,7 +9,7 @@
 class Database
 {
     // UPDATE THESE FOR PRODUCTION
-    private $host = "locallhost";           // Usually 'localhost' on Hostinger
+    private $host = "localhost";           // Usually 'localhost' on Hostinger
     private $username = "u194078580_admin";             // Your Hostinger DB username (e.g., u123456789_admin)
     private $password = "Mcpemaster@1";                 // Your Hostinger DB password
     private $dbname = "u194078580_course_withdr";  // Your Hostinger DB name (e.g., u123456789_course)
