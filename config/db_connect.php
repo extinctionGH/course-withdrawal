@@ -9,10 +9,10 @@
 class Database
 {
     // UPDATE THESE FOR PRODUCTION
-    private $host = "localhost";           // Usually 'localhost' on Hostinger
-    private $username = "u194078580_admin";             // Your Hostinger DB username (e.g., u123456789_admin)
-    private $password = "Mcpemaster@1";                 // Your Hostinger DB password
-    private $dbname = "u194078580_course_withdr";  // Your Hostinger DB name (e.g., u123456789_course)
+    private $host = "localhost";                    // Your database host
+    private $username = "your_db_username";         // Your database username
+    private $password = "your_db_password";         // Your database password
+    private $dbname = "your_database_name";         // Your database name
     private $charset = "utf8mb4";
 
     protected $conn;

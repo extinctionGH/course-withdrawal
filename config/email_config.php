@@ -12,17 +12,17 @@
  */
 
 // SMTP Server Settings - UPDATE FOR PRODUCTION
-define('SMTP_HOST', 'smtp.gmail.com');  // For Hostinger: 'smtp.hostinger.com'
+define('SMTP_HOST', 'smtp.gmail.com');  // Your SMTP host
 define('SMTP_PORT', 587); // 587 for TLS, 465 for SSL
 
 // Email Credentials - UPDATE FOR PRODUCTION
-define('SMTP_USERNAME', 'luisatilanoalfaro@gmail.com');
+define('SMTP_USERNAME', 'your_email@gmail.com');
 // IMPORTANT: Use App Password, not regular Gmail password
 // Generate at: https://myaccount.google.com/apppasswords
-define('SMTP_PASSWORD', 'ffidvmeoozszvdsk'); // Replace with App Password
+define('SMTP_PASSWORD', 'your_app_password'); // Your App Password
 
 // Sender Information
-define('SMTP_FROM_EMAIL', 'luisatilanoalfaro@gmail.com');
+define('SMTP_FROM_EMAIL', 'your_email@gmail.com');
 define('SMTP_FROM_NAME', 'Course Withdrawal System');
 
 // Email sending enabled flag
