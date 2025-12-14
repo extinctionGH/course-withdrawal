@@ -59,7 +59,7 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <div class="card">
     <h2>Withdrawal Requests Report</h2>
-    
+
     <!-- Filter Form -->
     <form method="GET" style="margin-bottom: 20px; padding: 20px; background: #0f1a35; border-radius: 8px;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -72,45 +72,48 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <option value="Rejected" <?= $status_filter == 'Rejected' ? 'selected' : '' ?>>Rejected</option>
                 </select>
             </div>
-            
+
             <div>
                 <label>Date From:</label>
                 <input type="date" name="date_from" value="<?= htmlspecialchars($date_from) ?>">
             </div>
-            
+
             <div>
                 <label>Date To:</label>
                 <input type="date" name="date_to" value="<?= htmlspecialchars($date_to) ?>">
             </div>
-            
+
             <div style="display: flex; align-items: flex-end; gap: 10px;">
                 <button type="submit" class="btn">Filter</button>
-                <a href="reports.php" class="btn" style="background: #3a506b;">Reset</a>
+                <a href="reports.php" class="btn"
+                    style="background: #3a506b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; line-height: 1; box-sizing: border-box;"><i
+                        class="fas fa-redo"></i> Reset</a>
             </div>
         </div>
     </form>
 
     <!-- Summary Stats -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+    <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
         <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center;">
             <div style="font-size: 24px; color: #5bc0be; font-weight: bold;"><?= count($reports) ?></div>
             <div style="color: #9ad1d4; font-size: 12px;">Total Records</div>
         </div>
-        
+
         <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center;">
             <div style="font-size: 24px; color: #ffd93d; font-weight: bold;">
                 <?= count(array_filter($reports, fn($r) => $r['Status'] == 'Pending')) ?>
             </div>
             <div style="color: #9ad1d4; font-size: 12px;">Pending</div>
         </div>
-        
+
         <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center;">
             <div style="font-size: 24px; color: #6bcf7f; font-weight: bold;">
                 <?= count(array_filter($reports, fn($r) => $r['Status'] == 'Approved')) ?>
             </div>
             <div style="color: #9ad1d4; font-size: 12px;">Approved</div>
         </div>
-        
+
         <div style="background: #0f1a35; padding: 15px; border-radius: 8px; text-align: center;">
             <div style="font-size: 24px; color: #ff7b7b; font-weight: bold;">
                 <?= count(array_filter($reports, fn($r) => $r['Status'] == 'Rejected')) ?>
@@ -122,7 +125,8 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- Export/Print Buttons -->
     <div style="margin-bottom: 20px;">
         <button onclick="window.print()" class="btn">🖨️ Print Report</button>
-        <a href="export_report.php?<?= http_build_query($_GET) ?>" class="btn" style="background: #4caf50;">📥 Export to CSV</a>
+        <a href="export_report.php?<?= http_build_query($_GET) ?>" class="btn" style="background: #4caf50;">📥 Export to
+            CSV</a>
     </div>
 
     <!-- Report Table -->

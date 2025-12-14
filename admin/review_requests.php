@@ -106,7 +106,9 @@ $pendingCount = count(array_filter($requests, fn($r) => $r['Status'] === 'Pendin
 
             <div style="display: flex; gap: 10px; align-items: flex-end;">
                 <button type="submit" class="btn">Filter</button>
-                <a href="review_requests.php" class="btn" style="background: #3a506b;">Reset</a>
+                <a href="review_requests.php" class="btn"
+                    style="background: #3a506b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; line-height: 1; box-sizing: border-box;"><i
+                        class="fas fa-redo"></i> Reset</a>
             </div>
         </form>
     </div>

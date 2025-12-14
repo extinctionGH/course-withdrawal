@@ -7,7 +7,8 @@
     box-sizing: border-box;
 }
 
-body, html {
+body,
+html {
     width: 100%;
     height: 100%;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -164,8 +165,13 @@ body, html {
 
 /* Animations */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes modalSlideIn {
@@ -173,6 +179,7 @@ body, html {
         opacity: 0;
         transform: translateY(-30px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -233,7 +240,9 @@ label {
     margin-bottom: 10px;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
     width: 100%;
     padding: 14px 16px;
     font-size: 14px;
@@ -245,14 +254,17 @@ input, textarea, select {
     font-family: inherit;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
     outline: none;
     border-color: #5bc0be;
     background: #1c2541;
     box-shadow: 0 0 0 4px rgba(91, 192, 190, 0.1);
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
     color: #6b7b8c;
 }
 
@@ -330,9 +342,19 @@ input::placeholder, textarea::placeholder {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    75% {
+        transform: translateX(10px);
+    }
 }
 
 /* ===============================
@@ -414,8 +436,15 @@ header {
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 header .user-info {
@@ -585,7 +614,8 @@ header .user-info span i {
     transform: translateY(-2px);
 }
 
-.card h2, .card h3 {
+.card h2,
+.card h3 {
     color: #5bc0be;
     margin-bottom: 20px;
     font-weight: 600;
@@ -684,7 +714,8 @@ table {
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-table th, table td {
+table th,
+table td {
     padding: 18px 15px;
     text-align: left;
     border-bottom: 1px solid #243b55;
@@ -726,7 +757,8 @@ table tbody tr:last-child td {
 }
 
 /* Status badges */
-td.pending, .status-badge.pending {
+td.pending,
+.status-badge.pending {
     color: #ffd93d;
     font-weight: 700;
     text-transform: uppercase;
@@ -734,7 +766,8 @@ td.pending, .status-badge.pending {
     letter-spacing: 0.5px;
 }
 
-td.approved, .status-badge.approved {
+td.approved,
+.status-badge.approved {
     color: #6bcf7f;
     font-weight: 700;
     text-transform: uppercase;
@@ -742,7 +775,8 @@ td.approved, .status-badge.approved {
     letter-spacing: 0.5px;
 }
 
-td.rejected, .status-badge.rejected {
+td.rejected,
+.status-badge.rejected {
     color: #ff7b7b;
     font-weight: 700;
     text-transform: uppercase;
@@ -751,7 +785,8 @@ td.rejected, .status-badge.rejected {
 }
 
 /* BUTTONS */
-button, .btn {
+button,
+.btn {
     background: linear-gradient(135deg, #3a506b 0%, #5bc0be 100%);
     color: white;
     padding: 12px 24px;
@@ -765,14 +800,18 @@ button, .btn {
     display: inline-block;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    line-height: 1;
+    box-sizing: border-box;
 }
 
-button:hover, .btn:hover {
+button:hover,
+.btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(91, 192, 190, 0.3);
 }
 
-button:active, .btn:active {
+button:active,
+.btn:active {
     transform: translateY(0);
 }
 
@@ -799,6 +838,21 @@ button:active, .btn:active {
 
 .btn-primary:hover {
     box-shadow: 0 6px 20px rgba(91, 192, 190, 0.3);
+}
+
+/* Ensure anchor tags styled as buttons match button sizing exactly */
+a.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+    text-decoration: none;
+    box-sizing: border-box;
+    height: auto;
+    padding: 12px 24px;
+    font-size: 14px;
+    vertical-align: middle;
 }
 
 /* Form Styling */
@@ -1081,6 +1135,7 @@ footer small {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1127,7 +1182,9 @@ footer small {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Tooltip */
@@ -1165,6 +1222,7 @@ footer small {
    PRINT STYLES
    =============================== */
 @media print {
+
     .sidebar,
     header,
     button,
@@ -1213,7 +1271,8 @@ footer small {
         padding: 20px !important;
     }
 
-    .card h2, .card h3 {
+    .card h2,
+    .card h3 {
         color: #000 !important;
         border-bottom: 2px solid #000 !important;
         padding-bottom: 10px !important;
@@ -1283,17 +1342,20 @@ footer small {
         color: #000 !important;
     }
 
-    td.pending, .status-badge.pending {
+    td.pending,
+    .status-badge.pending {
         color: #000 !important;
         font-weight: bold;
     }
 
-    td.approved, .status-badge.approved {
+    td.approved,
+    .status-badge.approved {
         color: #000 !important;
         font-weight: bold;
     }
 
-    td.rejected, .status-badge.rejected {
+    td.rejected,
+    .status-badge.rejected {
         color: #000 !important;
         font-weight: bold;
     }
@@ -1362,7 +1424,8 @@ footer small {
         font-size: 13px;
     }
 
-    table th, table td {
+    table th,
+    table td {
         padding: 12px 8px;
     }
 

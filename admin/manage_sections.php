@@ -75,9 +75,11 @@ $sections = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $totalCount = count($sections);
 ?>
 
-<?php if($message): ?>
-    <div class="alert <?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'alert-success' : 'alert-error' ?>">
-        <i class="fas fa-<?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'check-circle' : 'exclamation-circle' ?>"></i>
+<?php if ($message): ?>
+    <div
+        class="alert <?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'alert-success' : 'alert-error' ?>">
+        <i
+            class="fas fa-<?= strpos($message, 'success') !== false || strpos($message, 'added') !== false || strpos($message, 'updated') !== false || strpos($message, 'deleted') !== false ? 'check-circle' : 'exclamation-circle' ?>"></i>
         <?= htmlspecialchars($message) ?>
     </div>
 <?php endif; ?>
@@ -86,10 +88,10 @@ $totalCount = count($sections);
 <form method="POST" class="card">
     <h2><i class="fas fa-layer-group"></i> Manage Class Sections</h2>
     <h3>Add New Section</h3>
-    
+
     <label>Section Name:</label>
     <input type="text" name="section_name" required placeholder="Enter section name">
-    
+
     <button type="submit" name="add_section" class="btn">
         <i class="fas fa-plus"></i> Add Section
     </button>
@@ -100,34 +102,30 @@ $totalCount = count($sections);
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3>All Sections (<?= $totalCount ?>)</h3>
     </div>
-    
+
     <!-- Search Section -->
     <div style="background: #0f1a35; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        <form method="GET" style="display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+        <form method="GET" style="margin-bottom: 15px;">
             <div>
                 <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
                     <i class="fas fa-search"></i> Search Sections
                 </label>
-                <input type="text" 
-                       name="search" 
-                       placeholder="Search by section name..." 
-                       value="<?= htmlspecialchars($searchTerm) ?>"
-                       style="width: 100%;">
-            </div>
-            
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Search
-                </button>
-                <?php if (!empty($searchTerm)): ?>
-                    <a href="manage_sections.php" class="btn" style="background: #3a506b;">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                <?php endif; ?>
+                <input type="text" name="search" placeholder="Search by section name..."
+                    value="<?= htmlspecialchars($searchTerm) ?>" style="width: 100%;">
             </div>
         </form>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button type="submit" class="btn" onclick="this.closest('.card').querySelector('form').submit()">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <a href="manage_sections.php" class="btn"
+                style="background: #3a506b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-redo"></i> Reset
+            </a>
+        </div>
     </div>
-    
+
     <?php if ($sections): ?>
         <div style="overflow-x: auto;">
             <table class="styled-table">
@@ -139,22 +137,23 @@ $totalCount = count($sections);
                 </thead>
                 <tbody>
                     <?php foreach ($sections as $s): ?>
-                    <tr>
-                        <form method="POST">
-                            <td>
-                                <input type="text" name="section_name" value="<?= htmlspecialchars($s['SectionName']) ?>" required>
-                            </td>
-                            <td>
-                                <input type="hidden" name="section_id" value="<?= $s['SectionID'] ?>">
-                                <button type="submit" name="edit_section" class="btn">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button type="submit" name="delete_section" class="btn btn-danger">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        </form>
-                    </tr>
+                        <tr>
+                            <form method="POST">
+                                <td>
+                                    <input type="text" name="section_name" value="<?= htmlspecialchars($s['SectionName']) ?>"
+                                        required>
+                                </td>
+                                <td>
+                                    <input type="hidden" name="section_id" value="<?= $s['SectionID'] ?>">
+                                    <button type="submit" name="edit_section" class="btn">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    <button type="submit" name="delete_section" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </form>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -173,19 +172,19 @@ $totalCount = count($sections);
 </div>
 
 <script>
-// Highlight search terms in results
-<?php if (!empty($searchTerm)): ?>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchTerm = <?= json_encode($searchTerm) ?>;
-    
-    document.querySelectorAll('table tbody input[type="text"]').forEach(input => {
-        if (input.value.toLowerCase().includes(searchTerm.toLowerCase())) {
-            input.style.background = 'rgba(91, 192, 190, 0.15)';
-            input.style.borderColor = '#5bc0be';
-        }
-    });
-});
-<?php endif; ?>
+    // Highlight search terms in results
+    <?php if (!empty($searchTerm)): ?>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchTerm = <?= json_encode($searchTerm) ?>;
+
+            document.querySelectorAll('table tbody input[type="text"]').forEach(input => {
+                if (input.value.toLowerCase().includes(searchTerm.toLowerCase())) {
+                    input.style.background = 'rgba(91, 192, 190, 0.15)';
+                    input.style.borderColor = '#5bc0be';
+                }
+            });
+        });
+    <?php endif; ?>
 </script>
 
 <?php require '../includes/footer.php'; ?>

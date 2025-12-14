@@ -155,7 +155,7 @@ while ($row = $teacherStatsStmt->fetch()) {
 
     <!-- Search Section -->
     <div style="background: #0f1a35; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-        <form method="GET" style="display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+        <form method="GET" style="margin-bottom: 15px;">
             <div>
                 <label style="margin-bottom: 8px; display: block; color: #9ad1d4; font-size: 14px;">
                     <i class="fas fa-search"></i> Search Teachers/Admin
@@ -163,18 +163,17 @@ while ($row = $teacherStatsStmt->fetch()) {
                 <input type="text" name="search" placeholder="Search by name or email..."
                     value="<?= htmlspecialchars($searchTerm) ?>" style="width: 100%;">
             </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Search
-                </button>
-                <?php if (!empty($searchTerm)): ?>
-                    <a href="manage_teachers.php" class="btn" style="background: #3a506b;">
-                        <i class="fas fa-redo"></i> Reset
-                    </a>
-                <?php endif; ?>
-            </div>
         </form>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button type="submit" class="btn" onclick="this.closest('.card').querySelector('form').submit()">
+                <i class="fas fa-search"></i> Search
+            </button>
+            <a href="manage_teachers.php" class="btn"
+                style="background: #3a506b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="fas fa-redo"></i> Reset
+            </a>
+        </div>
     </div>
 
     <?php if ($teachers): ?>

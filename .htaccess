@@ -1,0 +1,46 @@
+# Security and URL Configuration
+# Apache .htaccess for Course Withdrawal System
+
+# Disable directory listing
+Options -Indexes
+
+# Deny access to sensitive files
+<FilesMatch "(^\.git|\.env|\.htaccess|composer\.json|composer\.lock)$">
+    Require all denied
+</FilesMatch>
+
+# Protect config directory - deny direct PHP execution of config files
+<Files "db_connect.php">
+    <If "%{REQUEST_URI} =~ m#/config/db_connect\.php$#">
+        Require all denied
+    </If>
+</Files>
+
+<Files "email_config.php">
+    <If "%{REQUEST_URI} =~ m#/config/email_config\.php$#">
+        Require all denied
+    </If>
+</Files>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP Settings (if allowed by host)
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
+
+# Default charset
+AddDefaultCharset UTF-8
+
+# Prevent access to .php files in vendor directory
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^vendor/.*\.php$ - [F,L]
+</IfModule>
